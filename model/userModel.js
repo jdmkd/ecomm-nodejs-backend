@@ -28,7 +28,11 @@ const userSchema = new mongoose.Schema({
   //   type: Buffer, 
   //   contentType: String // Store image MIME type (optional)
   // },
-
+  verfied: {
+    type: Number,
+    enum: [0, 1],   // 0 for not verfied, 1 for verfied
+    default: 1
+  },
   role: {
     type: Number,
     enum: [0, 1],   // Only allows 0 (customer) or 1 (admin)

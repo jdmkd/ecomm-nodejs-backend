@@ -15,6 +15,11 @@ const SmtpOtpSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    purpose: {
+        type: Number,
+        enum: [0, 1],   // 0 for forget_password, 1 for register
+        default: 1
+    },
     createdAt: {
         type: Date,
         default: Date.now,
