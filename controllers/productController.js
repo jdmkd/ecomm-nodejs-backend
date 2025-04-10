@@ -228,7 +228,7 @@ const updateProduct = async (req, res) => {
             });
 
             await productToUpdate.save();
-            return res.json({ success: true, message: "Product updated successfully." });
+            return res.json({ success: true, message: "Product updated successfully.",data: productToUpdate });
 
         } catch (error) {
             console.error("Error updating product:", error);

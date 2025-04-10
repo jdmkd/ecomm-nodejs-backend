@@ -80,7 +80,7 @@ const updateCategory =
       try {
         const categoryID = req.params.id;
   
-        // ✅ Handle Multer/Cloudinary upload errors
+        // Handle Multer/Cloudinary upload errors
         if (req.fileValidationError) {
           return sendError(res, req.fileValidationError);
         }

@@ -1,7 +1,39 @@
+# Node modules
 node_modules/
+**/node_modules/
+
 .env
 commands.txt
 npm-debug.log
 .DS_Store
 .vscode/
-*.log 
+
+# Build outputs
+.next/
+.build/
+dist/
+out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.*
+
+# Logs & Debugging
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+*.tmp
+
+# OS & Editor Specific Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Vercel-specific files
+.vercel

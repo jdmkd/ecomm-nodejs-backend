@@ -6,13 +6,18 @@ const { uploadProfile } = require("../middlewares/uploadMiddleware");
 const userController = require('../controllers/userController');
 
 // Routes for user
-// Public routes
 router.post('/register', userController.registerUser);
+router.post('/verify-otp', userController.verifyEmailWithOtp); // Verify email OTP (registration flow)
+// /email/verify-otp
+
+router.post('/email/resend/verify-otp', userController.resendEmailVerificationOtp); // Resend Email Verification OTP (after 5 minutes expiry)
+
 router.post('/login', userController.loginUser);
 
-router.post('/forget-password', userController.forgetPassword);
-router.post('/verify-otp', userController.verifyOtp);
 router.get('/get/all/otps', userController.getAllOtps);
+router.post('/password/reset/send-otp', userController.sendPasswordResetOtp);  // Send OTP to email for password reset
+router.post("/password/reset/verify-otp", userController.resetPasswordWithOtp); // For password reset with email otp
+router.post('/password/change/:id', userController.changePasswordWithOldPassword); // Change password using old password (for logged-in users)
 
 // Protected Routes (Requires Authentication)
 router.get('/' , userController.getAllUsers);

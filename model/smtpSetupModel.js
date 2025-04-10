@@ -27,5 +27,8 @@ const SmtpOtpSchema = new mongoose.Schema({
     },
 });
 
+// Enforce uniqueness for email + purpose
+// SmtpOtpSchema.index({ email: 1, purpose: 1 }, { unique: true });
+
 const SmtpOtp = mongoose.model('SmtpOtp', SmtpOtpSchema);
 module.exports = SmtpOtp;
