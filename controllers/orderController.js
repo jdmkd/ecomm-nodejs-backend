@@ -90,8 +90,8 @@ const createOrder = async (req, res) => {
 
             product.quantity -= quantity;
             await product.save();
-            console.log("product.quantity ==>",product.quantity)
-            console.log("product.save() !!!!!!!!!!!!!")
+            // console.log("product.quantity ==>",product.quantity)
+            // console.log("product.save() !!!!!!!!!!!!!")
             item.productName = product.name;
             item.price = product.offerPrice || product.price;
         }
