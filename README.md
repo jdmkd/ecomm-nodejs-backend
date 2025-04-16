@@ -142,9 +142,9 @@ PORT=5000
 MONGODB_URI=your_mongo_connection
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
-CLOUDINARY_CLOUD_NAME=xxx
-CLOUDINARY_API_KEY=xxx
-CLOUDINARY_API_SECRET=xxx
+CLOUDINARY_CLOUD_NAME=xxxx
+CLOUDINARY_API_KEY=xxxx
+CLOUDINARY_API_SECRET=xxxx
 JWT_SECRET=your_jwt_secret
 
 ```
