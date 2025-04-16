@@ -232,31 +232,27 @@ const loginUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
     try {
         const userId = req.params.id;
-        const { name, password, image } = req.body;
+        const { name, phone, image } = req.body;
 
-        // Find existing user
         const user = await User.findById(userId);
         if (!user) {
             return sendError(res, "User not found.", 404);
         }
 
-        // Prepare update fields
         const updateData = {};
+        
+        if (typeof name === 'string' && name.trim()) {
+            updateData.name = name.trim();
+        }
 
-        if (name?.trim()) updateData.name = name;
-        if (password?.trim()) updateData.password = await bcrypt.hash(password, 10);
-
-        // Handle image (from multer upload)
+        if (typeof phone === 'string' && phone.trim()) {
+            updateData.phone = phone.trim();
+        }
+        
         if (req.file && req.file.path) {
             updateData.image = req.file.path;
         }
 
-        // Update user and return updated object without password
-        // const updatedUser = await User.findByIdAndUpdate(
-        //     userId, 
-        //     updateData, 
-        //     { new: true, select: "-password -__v" }
-        // );
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { $set: updateData },
