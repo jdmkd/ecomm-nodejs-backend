@@ -7,7 +7,7 @@ commands.txt
 npm-debug.log
 .DS_Store
 .vscode/
-
+**/.vscode/
 # Build outputs
 .next/
 .build/
