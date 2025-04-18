@@ -16,8 +16,9 @@ router.post('/login', userController.loginUser);
 
 router.get('/get/all/otps', userController.getAllOtps);
 router.post('/password/reset/send-otp', userController.sendPasswordResetOtp);  // Send OTP to email for password reset
+router.post("/password/reset/verify-otp-only", userController.resetPasswordWithOtpOnly); // For password reset with email otp
 router.post("/password/reset/verify-otp", userController.resetPasswordWithOtp); // For password reset with email otp
-router.post('/password/change/:id', userController.changePasswordWithOldPassword); // Change password using old password (for logged-in users)
+router.put("/password/change/:id", userController.changePasswordWithOldPassword); // Change password using old password (for logged-in users)
 
 // Protected Routes (Requires Authentication)
 router.get('/' , userController.getAllUsers);

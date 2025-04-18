@@ -199,6 +199,10 @@ const loginUser = asyncHandler(async (req, res) => {
             return sendError(res, "No account found with this email address.", 401);
         }
 
+        if (user.status === 'banned' || user.status === 'blocked') {
+            return sendError(res, "Your account is restricted.", 403);
+        }
+          
         // Check if user is verified
         if (user.verfied == 0) {
             return sendError(res, "Your account is not verified. Please check your email for the OTP.", 403);
@@ -232,7 +236,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
     try {
         const userId = req.params.id;
-        const { name, phone, image } = req.body;
+        const { name, phone, gender, dateOfBirth, currentAddress, image } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
@@ -248,6 +252,23 @@ const updateUser = asyncHandler(async (req, res) => {
         if (typeof phone === 'string' && phone.trim()) {
             updateData.phone = phone.trim();
         }
+
+        if (phone && /^\d{10}$/.test(phone)) updateData.phone = phone;
+        
+        if (gender && ['male', 'female', 'other', 'none'].includes(gender.toLowerCase())) {
+            updateData.gender = gender.toLowerCase();
+        }
+        
+        if (dateOfBirth) {
+            const dob = new Date(dateOfBirth);
+            if (!isNaN(dob.getTime()) && dob <= new Date()) {
+              updateData.dateOfBirth = dob;
+            } else {
+              return res.status(400).json({ message: "Invalid or future date of birth." });
+            }
+        }
+        
+        if (currentAddress) updateData.currentAddress = currentAddress;
         
         if (req.file && req.file.path) {
             updateData.image = req.file.path;
@@ -383,6 +404,32 @@ const sendPasswordResetOtp = asyncHandler(async (req, res) => {
     }
 });
 
+
+// Varify Otp for password reset
+const resetPasswordWithOtpOnly = asyncHandler(async (req, res) => {
+    const { email, otp } = req.body;
+  
+    if (!email || !otp) {
+      return sendValidationError(res, "Email and OTP are required.");
+    }
+  
+    const purpose = 1; // Password reset
+    const otpRecord = await SmtpOtp.findOne({ email, otp, purpose });
+  
+    if (!otpRecord) {
+      return sendError(res, "Invalid or expired OTP.", 400);
+    }
+  
+    const isExpired = (new Date() - otpRecord.createdAt) > 300000; // 5 minutes
+    if (isExpired) {
+      await SmtpOtp.deleteOne({ email, purpose });
+      return sendError(res, "OTP has expired.", 400);
+    }
+  
+    return sendSuccess(res, "Otp Varified successfully.");
+});
+
+
 // Reset password using OTP (for forgot password)
 const resetPasswordWithOtp = asyncHandler(async (req, res) => {
     const { email, otp, newPassword } = req.body;
@@ -452,6 +499,7 @@ module.exports = {
     deleteUser,
     getAllOtps,
     sendPasswordResetOtp,
+    resetPasswordWithOtpOnly,
     resetPasswordWithOtp,
     changePasswordWithOldPassword,
 };
