@@ -73,7 +73,8 @@ const registerUser = asyncHandler(async (req, res) => {
         
         await user.save();
 
-        // Generate 4-digit OTP
+        // Generate 4-digit OTP 
+        // purpose = 0 for Registration and purpose = 1 for Forgot Password
         const otp = await generateAndStoreOtp(email, 0);
         
         // Send OTP via email
@@ -174,7 +175,7 @@ const resendEmailVerificationOtp = asyncHandler(async (req, res) => {
       };
   
       await transporter.sendMail(mailOptions);
-      return sendSuccess(res, "Verification OTP resent to your email.");
+      return sendSuccess(res, "Verification OTP resented to your registered email.");
   
     } catch (error) {
       console.error("Error resending email verification OTP:", error);
@@ -192,7 +193,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase() });
 
         // Check if the user exists
         if (!user) {
@@ -261,9 +262,12 @@ const updateUser = asyncHandler(async (req, res) => {
         
         if (dateOfBirth) {
             const dob = new Date(dateOfBirth);
+            console.log("dob ==> ",dob);
             if (!isNaN(dob.getTime()) && dob <= new Date()) {
+                console.log("inside if true!!");
               updateData.dateOfBirth = dob;
             } else {
+                console.log("Else part!!!");
               return res.status(400).json({ message: "Invalid or future date of birth." });
             }
         }

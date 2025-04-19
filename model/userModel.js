@@ -56,18 +56,35 @@ const userSchema = new mongoose.Schema({
   dateOfBirth: {
     type: Date,
     required: false,
+    default: null,
     validate: {
       validator: function (value) {
-        return value <= new Date(); // DOB cannot be in the future
+        if (!value) return true;
+
+        const dob = new Date(value);
+        const today = new Date();
+
+        // Check 1: Date must not be in the future
+        if (dob > today) return false;
+
+        // Check 2: Must be at least 16 years old
+        const minAllowedDOB = new Date(
+          today.getFullYear() - 16,
+          today.getMonth(),
+          today.getDate()
+        );
+
+        return dob <= minAllowedDOB;
       },
-      message: 'Date of birth cannot be in the future.'
+      message: 'Date of birth must not be in the future and user must be at least 16 years old.'
     }
   },
 
   gender: {
     type: String,
     enum: ['male', 'female', 'other'],
-    default: '',
+    default: null,
+    required: false,
     lowercase: true,
     trim: true
   },  
