@@ -29,7 +29,7 @@ app.use("/image/poster", express.static("public/posters"));
 app.use("/", routes);
 
 
-// Example route using asyncHandler directly in app.js
+// default route or api endpoint
 app.get('/', asyncHandler(async (req, res) => {
     res.json({ success: true, message: 'API working successfully', data: null });
 }));
@@ -41,7 +41,7 @@ app.use((error, req, res, next) => {
 
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT}`);
+    console.log(`Server running on port : http://127.0.0.1:${process.env.PORT}`);
 });
 
 
