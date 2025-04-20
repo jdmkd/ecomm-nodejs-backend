@@ -13,20 +13,32 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = async ({ to, subject, html }) => {
     try {
+      
+      if (!to || !subject || !html) {
+        console.error(`Email sending aborted: Missing required fields — ${[
+          !to ? "to" : null,
+          !subject ? "subject" : null,
+          !html ? "html content" : null
+        ].filter(Boolean).join(", ")}`);
+
+        throw new Error("Missing required email fields: to, subject, or html");
+      }
+
       const info = await transporter.sendMail({
-        from: `"YourApp" <${process.env.EMAIL_USER}>`, // sender address
-        to,
-        subject,
-        html,
+          from: `"EcommApp" <${process.env.EMAIL_USER}>`, // sender address
+          to,
+          subject,
+          html,
       });
-      console.log("Email sent:", info.messageId);
+
+      console.log(`Email successfully sent to ${to} with subject: "${subject}" [Message ID: ${info.messageId}]`);
+      return true;
     } catch (err) {
-      console.error("Email sending failed:", err.message);
+      console.error(`Failed to send email to ${to || "unknown recipient"} - ${err.message}`);
       throw new Error("Failed to send email");
     }
 };
   
-module.exports = { 
-    transporter,
+module.exports = {
     sendMail,
 };
