@@ -84,15 +84,26 @@ const createProduct = async (req, res) => {
         const imageUrls = [];
         const fields = ['image1', 'image2', 'image3', 'image4', 'image5'];
   
-        fields.forEach((field, index) => {
-          if (req.files[field] && req.files[field].length > 0) {
-            const file = req.files[field][0];
-            imageUrls.push({
-              image: index + 1,
-              url: file.path // Cloudinary URL
-            });
-          }
-        });
+        // fields.forEach((field, index) => {
+        //   if (req.files[field] && req.files[field].length > 0) {
+        //     const file = req.files[field][0];
+        //     imageUrls.push({
+        //       image: index + 1,
+        //       url: file.path // Cloudinary URL
+        //     });
+        //   }
+        // });
+
+        for (const field of fields) {
+            if (req.files[field] && req.files[field].length > 0) {
+                const file = req.files[field][0];
+                const cloudinaryUrl = file?.path; // Cloudinary URL from the uploaded file
+                imageUrls.push({
+                    image: fields.indexOf(field) + 1, // Incrementing image index
+                    url: cloudinaryUrl
+                });
+            }
+        }
   
         const newProduct = new Product({
           name,
@@ -133,7 +144,7 @@ const updateProduct = async (req, res) => {
     const productId = req.params.id;
 
     // Handle uploads for 5 image fields using Cloudinary
-    uploadCloudinary.uploadProduct.fields([
+    await uploadCloudinary.uploadProduct.fields([
         { name: 'image1', maxCount: 1 },
         { name: 'image2', maxCount: 1 },
         { name: 'image3', maxCount: 1 },
@@ -210,22 +221,43 @@ const updateProduct = async (req, res) => {
             productToUpdate.proVariantId = proVariantId || productToUpdate.proVariantId;
 
             // Update image fields if present
+            // const fields = ['image1', 'image2', 'image3', 'image4', 'image5'];
+            // fields.forEach(async (field, index) => {
+            //     if (req.files[field] && req.files[field].length > 0) {
+            //         const file = req.files[field][0];
+            //         const cloudinaryUrl = file?.path; // Cloudinary gives us secure URL in `path`
+            //         const imageIndex = index + 1;
+
+            //         // Check if already exists
+            //         const existingImage = await productToUpdate.images.find(img => img.image === imageIndex);
+            //         if (existingImage) {
+            //             existingImage.url = cloudinaryUrl;
+            //         } else {
+            //             await productToUpdate.images.push({ image: imageIndex, url: cloudinaryUrl });
+            //         }
+            //     }
+            // });
+
             const fields = ['image1', 'image2', 'image3', 'image4', 'image5'];
-            fields.forEach((field, index) => {
+
+            for (let index = 0; index < fields.length; index++) {
+                const field = fields[index];
+
                 if (req.files[field] && req.files[field].length > 0) {
                     const file = req.files[field][0];
                     const cloudinaryUrl = file?.path; // Cloudinary gives us secure URL in `path`
                     const imageIndex = index + 1;
 
-                    // Check if already exists
-                    const existingImage = productToUpdate.images.find(img => img.image === imageIndex);
+                    // Check if the image already exists
+                    const existingImage = await productToUpdate.images.find(img => img.image === imageIndex);
                     if (existingImage) {
                         existingImage.url = cloudinaryUrl;
                     } else {
+                        // Push the new image to the images array
                         productToUpdate.images.push({ image: imageIndex, url: cloudinaryUrl });
                     }
                 }
-            });
+            }
 
             await productToUpdate.save();
             return res.json({ success: true, message: "Product updated successfully.",data: productToUpdate });
