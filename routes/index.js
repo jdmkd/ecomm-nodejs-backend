@@ -19,9 +19,9 @@ router.use("/variants", require("./variantRoutes"));
 router.use("/products", require("./productRoutes"));
 router.use("/couponCodes", require("./couponCodeRoutes"));
 router.use("/posters", require("./posterRoutes"));
-router.use("/users", require("./userRoutes"));
 router.use("/orders", require("./orderRoutes"));
 router.use("/payment", require("./paymentRoutes"));
 router.use("/notification", require("./notificationRoutes"));
+router.use("/users", require("./userRoutes"));
 
 module.exports = router;

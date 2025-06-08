@@ -246,10 +246,6 @@ const loginUser = asyncHandler(async (req, res) => {
         if (!user) {
             return sendError(res, "No account found with this email address.", 401);
         }
-
-        if (user.status === 'banned' || user.status === 'blocked') {
-            return sendError(res, "Your account is restricted.", 403);
-        }
           
         // Check if user is verified
         if (user.verfied == 0) {
@@ -259,6 +255,10 @@ const loginUser = asyncHandler(async (req, res) => {
         // Compare passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return sendError(res, "Invalid email or password.", 401);
+        
+        if (user.status === "banned" || user.status === "blocked") {
+          return sendError(res, "Your account is restricted.", 403);
+        }
         
         // Generate JWT token
         const token = jwt.sign(
