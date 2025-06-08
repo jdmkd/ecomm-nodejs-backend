@@ -23,5 +23,6 @@ router.use("/orders", require("./orderRoutes"));
 router.use("/payment", require("./paymentRoutes"));
 router.use("/notification", require("./notificationRoutes"));
 router.use("/users", require("./userRoutes"));
+router.use("/admin", require("./adminRoutes"));
 
 module.exports = router;
