@@ -8,7 +8,7 @@ const adminController = require("../controllers/adminController");
 // Apply both auth and admin checks
 // router.use(authMiddleware, isAdmin);
 
-// router.get("/login", adminController.loginAdminUser);
+router.post("/login", adminController.loginAdminUser);
 
 // Admin-only operations
 router.get("/users", adminController.getAllUsers);

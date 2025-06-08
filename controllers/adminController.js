@@ -1,4 +1,14 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const asyncHandler = require("express-async-handler");
 const User = require("../model/userModel");
+const {
+  sendSuccess,
+  sendError,
+  sendValidationError,
+  sendNotFoundError,
+} = require("../helpers/responseUtil");
+const { sendMail } = require("../config/mailer");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
@@ -14,10 +24,20 @@ exports.loginAdminUser = async (req, res) => {
 
     // Check if the user exists
     if (!user) {
-      return sendError(res, "No account found with this email address.", 401);
+      return sendError(res, "Invalid email or password.", 401);
     }
 
-    if (user.status === "banned" || user.status === "blocked") {
+    // Compare passwords immediately
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return sendError(res, "Invalid email or password.", 401);
+
+    // Admin role check
+    if (user.role !== 1) {
+      // return sendError(res, "Invalid email or password.", 401);
+      return sendError(res, "Access denied. Admins only.", 403);
+    }
+
+    if (["banned", "blocked"].includes(user.status)) {
       return sendError(res, "Your account is restricted.", 403);
     }
 
@@ -29,10 +49,6 @@ exports.loginAdminUser = async (req, res) => {
         403
       );
     }
-
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return sendError(res, "Invalid email or password.", 401);
 
     // Generate JWT token
     const token = jwt.sign(
@@ -47,7 +63,10 @@ exports.loginAdminUser = async (req, res) => {
 
     const userData = await User.findById(user._id).select("-password -__v");
     // Authentication successful
-    return sendSuccess(res, "Login successful.", { user: userData, token });
+    return sendSuccess(res, "Admin Login successful.", {
+      user: userData,
+      token,
+    });
   } catch (error) {
     console.error("Login error:", error);
     return sendError(
@@ -57,6 +76,7 @@ exports.loginAdminUser = async (req, res) => {
     );
   }
 };
+
 // @desc Get all users
 exports.getAllUsers = async (req, res) => {
   const users = await User.find().select("-password");
