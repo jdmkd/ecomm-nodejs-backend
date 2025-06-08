@@ -2,6 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 // Import route modules
+// default route or api endpoint for Health check
+router.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "API working successfully",
+    data: null,
+  });
+});
 router.use("/cloudinary", require("./cloudinaryRoutes"));
 router.use("/brands", require("./brandRoutes"));
 router.use("/categories", require("./categoryRoutes"));

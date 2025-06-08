@@ -1,47 +1,19 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const asyncHandler = require("express-async-handler");
 require("dotenv").config();
+const connectDB = require("./config/dbConfig");
+const app = require("./app");
 
-const connectDB = require("./config/dbConfig.js"); // Database connection
-const routes = require("./routes/index.js"); // Import all routes
-
-const app = express();
+// Start server only after DB is connected
+const PORT = process.env.PORT || 5000;
 
 // Connect to Database
-connectDB();
-
-// Middleware
-app.use(cors({ origin: "*" }));
-app.use(bodyParser.json());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-
-// Static File Serving
-app.use("/image/products", express.static("public/products"));
-app.use("/image/category", express.static("public/category"));
-app.use("/image/poster", express.static("public/posters"));
-
-
-// Routes
-app.use("/", routes);
-
-
-// default route or api endpoint
-app.get('/', asyncHandler(async (req, res) => {
-    res.json({ success: true, message: 'API working successfully', data: null });
-}));
-
-// Global error handler
-app.use((error, req, res, next) => {
-    res.status(500).json({ success: false, message: error.message, data: null });
-});
-
-
-app.listen(process.env.PORT, () => {
-    console.log(`Server running on port : http://127.0.0.1:${process.env.PORT}`);
-});
-
-
+(async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`✅ Server running at http://127.0.0.1:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Database connection failed:", error);
+    process.exit(1);
+  }
+})();
