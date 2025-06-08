@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
@@ -11,48 +11,51 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/.+@.+\..+/, 'Please enter a valid email address.']
+    match: [/.+@.+\..+/, "Please enter a valid email address."],
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   phone: {
     type: String,
     default: null,
     maxlength: 15,
-    match: [/^\d{10,15}$/, 'Please enter a valid phone number.']
+    match: [/^\d{10,15}$/, "Please enter a valid phone number."],
   },
   image: {
     type: String,
-    default: null,  // Stores the path of the profile photo (nullable)
+    default: null, // Stores the path of the profile photo (nullable)
     trim: true,
-    match: [/^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)(\?.*)?$/, 'Invalid image URL.']
+    match: [
+      /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)(\?.*)?$/,
+      "Invalid image URL.",
+    ],
   },
   // image: {
-  //   type: Buffer, 
+  //   type: Buffer,
   //   contentType: String // Store image MIME type (optional)
   // },
   verfied: {
     type: Number,
-    enum: [0, 1],   // 0 for not verfied, 1 for verfied
-    default: 1
+    enum: [0, 1], // 0 for not verfied, 1 for verfied
+    default: 1,
   },
   role: {
     type: Number,
-    enum: [0, 1],   // Only allows 0 (customer) or 1 (admin)
-    default: 0,     // Default role is 0 (customer)
+    enum: [0, 1], // Only allows 0 (customer) or 1 (admin)
+    default: 0, // Default role is 0 (customer)
   },
-  
+
   status: {
     type: String,
-    enum: ['active', 'inactive', 'suspended', 'blocked', 'banned'],
+    enum: ["active", "inactive", "suspended", "blocked", "banned"],
     default: "active",
     trim: true,
     lowercase: true,
-    maxlength: 10
+    maxlength: 10,
   },
-  
+
   dateOfBirth: {
     type: Date,
     required: false,
@@ -76,48 +79,50 @@ const userSchema = new mongoose.Schema({
 
         return dob <= minAllowedDOB;
       },
-      message: 'Date of birth must not be in the future and user must be at least 16 years old.'
-    }
+      message:
+        "Date of birth must not be in the future and user must be at least 16 years old.",
+    },
   },
 
   gender: {
     type: String,
-    enum: ['male', 'female', 'other'],
+    enum: ["male", "female", "other"],
     default: null,
     required: false,
     lowercase: true,
-    trim: true
-  },  
-    
+    trim: true,
+  },
+
   currentAddress: {
     type: String,
     required: false,
     trim: true,
     maxlength: 255,
-    default: null
-  },    
+    default: null,
+  },
 
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-// Middleware to update 'updatedAt' before saving
-userSchema.pre('save', function(next) {
+// Auto-update 'updatedAt' before saving
+userSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-userSchema.pre('findOneAndUpdate', function (next) {
+// Auto-update 'updatedAt' on findOneAndUpdate
+userSchema.pre("findOneAndUpdate", function (next) {
   this.set({ updatedAt: Date.now() });
   next();
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
