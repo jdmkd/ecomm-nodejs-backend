@@ -10,16 +10,6 @@ const { sendMail } = require('../config/mailer');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-// Get all users
-const getAllUsers = asyncHandler(async (req, res) => {
-    try {
-        const users = await User.find();   // Exclude sensitive fields;
-        return sendSuccess(res, "Users retrieved successfully.", users);
-    } catch (error) {
-        return sendError(res, error.message);
-    }
-});
-
 // Get a user by ID
 const getUserById = asyncHandler(async (req, res) => {
     try {
@@ -375,21 +365,6 @@ const deleteUser = asyncHandler(async (req, res) => {
 // });
 
 
-// Get all user OTP
-const getAllOtps = async (req, res) => {
-    console.log("Get all user OTP");
-    
-    console.log(req.params.id);
-    try {
-        const otps = await SmtpOtp.find().sort({ createdAt: -1 }); // Sorted by newest first
-        console.log('OTP', otps);
-        return sendSuccess(res, "all data fetched successfully.",otps);
-    } catch (error) {
-        console.error("getAllOtps ==> ",error)
-        return sendError(res, error.message);
-    }
-};
-
 // Send OTP for Password Reset (Forgot Password Flow)
 const resetPasswordSendOtp = asyncHandler(async (req, res) => {
     try {
@@ -541,8 +516,7 @@ const changePasswordUsingOldPassword = asyncHandler(async (req, res) => {
 });
   
 
-module.exports = { 
-    getAllUsers, 
+module.exports = {
     getUserById, 
     registerUser, 
     verifyEmailWithOtp,
@@ -550,7 +524,6 @@ module.exports = {
     loginUser, 
     updateUser, 
     deleteUser,
-    getAllOtps,
     changePasswordUsingOldPassword,
     resetPasswordSendOtp,
     resetPasswordVerifyOtp,

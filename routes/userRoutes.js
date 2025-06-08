@@ -15,11 +15,6 @@ router.post(
 
 router.post("/login", userController.loginUser);
 
-// TODO: This endpoint exposes sensitive OTP data and should be removed or secured in production.
-// OTP verification should always be done by sending the user's email and the OTP to the backend.
-// The backend should then validate and respond whether the OTP is valid or not — without exposing stored OTPs directly.
-router.get("/get/all/otps", userController.getAllOtps);
-
 router.post("/password/reset/send-otp", userController.resetPasswordSendOtp); // Send OTP to email for password reset
 router.post(
   "/password/reset/verify-otp-only",
@@ -34,9 +29,6 @@ router.put(
   userController.changePasswordUsingOldPassword
 );
 
-// Protected Routes (Requires Authentication)
-// TODO: In future, restrict this getAllUsers route to admin users only
-router.get("/", userController.getAllUsers);
 router.get("/:id", authMiddleware, userController.getUserById);
 router.put(
   "/update/:id",
