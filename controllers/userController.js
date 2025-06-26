@@ -87,7 +87,7 @@ const registerUser = asyncHandler(async (req, res) => {
                         This OTP is valid for <strong>5 minutes</strong>. Please do not share this code with anyone.
                     </p>
                     <p style="font-size: 14px; color: #888;">
-                        If you didn’t create this account, please ignore this email or contact our support.
+                        If you didn't create this account, please ignore this email or contact our support.
                     </p>
 
                     <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
@@ -234,45 +234,52 @@ const resendEmailVerificationOtp = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    // Validate input
+    // 1. Input Validation
     if (!email || !password) {
         return sendValidationError(res, "Email and password are required.");
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return sendValidationError(res, "Please provide a valid email address.");
+    }
 
     try {
+        // 2. User Lookup (case-insensitive)
         const user = await User.findOne({ email: email.toLowerCase() });
 
-        // Check if the user exists
+        // 3a. User Existence Check
         if (!user) {
-            return sendError(res, "No account found with this email address.", 401);
+            // Generic error for security
+            return sendError(res, "Invalid email or password.", 401);
         }
-          
-        // Check if user is verified
+
+        // 3b. Password Verification (before revealing account status)
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            // Always generic error for security
+            return sendError(res, "Invalid email or password.", 401);
+        }
+
+        // 3c. Account Verification Check (only after password is correct)
         if (user.verfied == 0) {
             return sendError(res, "Your account is not verified. Please check your email for the OTP.", 403);
         }
 
-        // Compare passwords
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return sendError(res, "Invalid email or password.", 401);
-        
+        // 3d. Account Status Check
         if (user.status === "banned" || user.status === "blocked") {
-          return sendError(res, "Your account is restricted.", 403);
+            return sendError(res, "Your account is restricted.", 403);
         }
-        
-        // Generate JWT token
+
+        // 4. Token Generation
         const token = jwt.sign(
-            { 
-                id: user._id, 
-                email: user.email, 
-                role: user.role 
-            },
-            JWT_SECRET, 
+            { id: user._id, email: user.email, role: user.role },
+            JWT_SECRET,
             { expiresIn: '15d' }
         );
-        
+
+        // 5. Prepare User Data (exclude sensitive info)
         const userData = await User.findById(user._id).select('-password -__v');
-        // Authentication successful
+
+        // 6. Success Response
         return sendSuccess(res, "Login successful.", { user: userData, token });
     } catch (error) {
         console.error("Login error:", error);
