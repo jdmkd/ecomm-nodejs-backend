@@ -19,9 +19,10 @@ router.use("/variants", require("./variantRoutes"));
 router.use("/products", require("./productRoutes"));
 router.use("/couponCodes", require("./couponCodeRoutes"));
 router.use("/posters", require("./posterRoutes"));
-router.use("/orders", require("./orderRoutes"));
-router.use("/payment", require("./paymentRoutes"));
 router.use("/notification", require("./notificationRoutes"));
+router.use("/orders", require("./orderRoutes"));
+router.use("/address", require("./addressRoutes"));
+router.use("/payment", require("./paymentRoutes"));
 router.use("/users", require("./userRoutes"));
 router.use("/admin", require("./adminRoutes"));
 

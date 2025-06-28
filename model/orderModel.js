@@ -43,13 +43,33 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  
+  // Reference to shipping address in Address model
+  shippingAddressID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Address',
+    required: true
+  },
+  
+  // Reference to billing address in Address model (can be same as shipping)
+  billingAddressID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Address',
+    required: true
+  },
+
+  // Keep shipping address data for order history (immutable)
   shippingAddress: {
     phone: String,
+    fullName: String,
     street: String,
+    apartment: String,
     city: String,
     state: String,
     postalCode: String,
-    country: String
+    country: String,
+    landmark: String,
+    instructions: String
   },
 
   paymentMethod: {

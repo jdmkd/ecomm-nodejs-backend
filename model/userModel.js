@@ -93,14 +93,6 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
 
-  currentAddress: {
-    type: String,
-    required: false,
-    trim: true,
-    maxlength: 255,
-    default: null,
-  },
-
   createdAt: {
     type: Date,
     default: Date.now,
@@ -122,6 +114,18 @@ userSchema.pre("findOneAndUpdate", function (next) {
   this.set({ updatedAt: Date.now() });
   next();
 });
+
+// Virtual for getting user addresses
+userSchema.virtual('addresses', {
+  ref: 'Address',
+  localField: '_id',
+  foreignField: 'userID',
+  justOne: false
+});
+
+// Ensure virtual fields are serialized
+userSchema.set('toJSON', { virtuals: true });
+userSchema.set('toObject', { virtuals: true });
 
 const User = mongoose.model("User", userSchema);
 
