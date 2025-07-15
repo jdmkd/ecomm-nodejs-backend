@@ -5,9 +5,9 @@ const { sendSuccess, sendError, sendValidationError, sendNotFoundError } = requi
 // Get all addresses for a user
 const getUserAddresses = asyncHandler(async (req, res) => {
     try {
-        const userId = req.params.userId;
+        // const userId = req.params.userId;
         
-        const addresses = await Address.getUserAddresses(userId);
+        const addresses = await Address.find();
 
         if (!addresses) {
             return sendNotFoundError(res, "No address found.");
@@ -40,8 +40,8 @@ const getDefaultAddress = asyncHandler(async (req, res) => {
 // Add new address
 const addAddress = asyncHandler(async (req, res) => {
     try {
-        const userId = req.params.userId;
         const {
+            userID,
             addressType,
             isDefault,
             fullName,
@@ -68,7 +68,7 @@ const addAddress = asyncHandler(async (req, res) => {
 
         // Create address
         const addressData = {
-            userID: userId,
+            userID,
             addressType: addressType || 'home',
             isDefault: isDefault || false,
             fullName,
@@ -82,8 +82,8 @@ const addAddress = asyncHandler(async (req, res) => {
             landmark,
             instructions
         };
-
-        const newAddress = new Address(addressData);
+        
+        const newAddress = new Address(addressData);      
         await newAddress.save();
 
         return sendSuccess(res, "Address added successfully.", newAddress, 201);
@@ -97,9 +97,9 @@ const addAddress = asyncHandler(async (req, res) => {
 const updateAddress = asyncHandler(async (req, res) => {
     try {
         const addressId = req.params.addressId;
-        const userId = req.params.userId || req.user.id;
-        
+
         const {
+            userID,
             addressType,
             isDefault,
             fullName,
@@ -115,7 +115,7 @@ const updateAddress = asyncHandler(async (req, res) => {
         } = req.body;
 
         // Check if address exists and belongs to user
-        const existingAddress = await Address.findOne({ _id: addressId, userID: userId });
+        const existingAddress = await Address.findOne({ _id: addressId, userID });
         if (!existingAddress) {
             return sendNotFoundError(res, "Address not found.");
         }
@@ -161,10 +161,10 @@ const updateAddress = asyncHandler(async (req, res) => {
 const deleteAddress = asyncHandler(async (req, res) => {
     try {
         const addressId = req.params.addressId;
-        const userId = req.params.userId || req.user.id;
+        // const userID = req.body.userID || '';
 
         // Check if address exists and belongs to user
-        const existingAddress = await Address.findOne({ _id: addressId, userID: userId });
+        const existingAddress = await Address.findOne({ _id: addressId });
         if (!existingAddress) {
             return sendNotFoundError(res, "Address not found.");
         }
@@ -182,11 +182,12 @@ const deleteAddress = asyncHandler(async (req, res) => {
 // Set address as default
 const setDefaultAddress = asyncHandler(async (req, res) => {
     try {
+        
         const addressId = req.params.addressId;
-        const userId = req.params.userId || req.user.id;
+        const userID = req.body.userID;
 
         // Check if address exists and belongs to user
-        const existingAddress = await Address.findOne({ _id: addressId, userID: userId, isActive: true });
+        const existingAddress = await Address.findOne({ _id: addressId, userID, isActive: true });
         if (!existingAddress) {
             return sendNotFoundError(res, "Address not found.");
         }
@@ -205,9 +206,25 @@ const setDefaultAddress = asyncHandler(async (req, res) => {
 const getAddressById = asyncHandler(async (req, res) => {
     try {
         const addressId = req.params.addressId;
-        const userId = req.params.userId || req.user.id;
+        const userId = req.params.userId;
 
         const address = await Address.findOne({ _id: addressId, userID: userId, isActive: true });
+        if (!address) {
+            return sendNotFoundError(res, "Address not found.");
+        }
+
+        return sendSuccess(res, "Address retrieved successfully.", address);
+    } catch (error) {
+        console.error("Get address by ID error:", error);
+        return sendError(res, "Failed to retrieve address.", 500);
+    }
+});
+
+const getAllAddressByUserID = asyncHandler(async (req, res) => {
+    try {
+        const userID = req.params.userId;
+
+        const address = await Address.find({ userID: userID, isActive: true });
         if (!address) {
             return sendNotFoundError(res, "Address not found.");
         }
@@ -222,9 +239,10 @@ const getAddressById = asyncHandler(async (req, res) => {
 module.exports = {
     getUserAddresses,
     getDefaultAddress,
+    getAddressById,
+    getAllAddressByUserID,
     addAddress,
     updateAddress,
     deleteAddress,
     setDefaultAddress,
-    getAddressById
 }; 

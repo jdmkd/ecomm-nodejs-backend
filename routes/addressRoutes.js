@@ -12,8 +12,12 @@ router.get('/', addressController.getUserAddresses);
 // Get default address for the authenticated user
 router.get('/default', addressController.getDefaultAddress);
 
+// router.use(authMiddleware)
 // Get address by ID
-router.get('/:addressId', addressController.getAddressById);
+router.get('/getAddressById/:addressId', addressController.getAddressById);
+
+// Get address by userID
+router.get('/getAllAddressByUserID/:userId', addressController.getAllAddressByUserID);
 
 // Add new address
 router.post('/', addressController.addAddress);
@@ -25,6 +29,7 @@ router.put('/:addressId', addressController.updateAddress);
 router.delete('/:addressId', addressController.deleteAddress);
 
 // Set address as default
-router.patch('/:addressId/default', addressController.setDefaultAddress);
+router.put('/setDefaultAddress/:addressId', addressController.setDefaultAddress);
+
 
 module.exports = router; 
