@@ -8,7 +8,10 @@ const getUserAddresses = asyncHandler(async (req, res) => {
         const userId = req.params.userId;
         
         const addresses = await Address.getUserAddresses(userId);
-        
+
+        if (!addresses) {
+            return sendNotFoundError(res, "No address found.");
+        }
         return sendSuccess(res, "Addresses retrieved successfully.", addresses);
     } catch (error) {
         console.error("Get user addresses error:", error);
@@ -37,7 +40,7 @@ const getDefaultAddress = asyncHandler(async (req, res) => {
 // Add new address
 const addAddress = asyncHandler(async (req, res) => {
     try {
-        const userId = req.params.userId || req.user.id;
+        const userId = req.params.userId;
         const {
             addressType,
             isDefault,
