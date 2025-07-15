@@ -4,7 +4,7 @@ const addressController = require('../controllers/addressController');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 
 // All routes require authentication
-router.use(authMiddleware);
+
 
 // Get all addresses for the authenticated user
 router.get('/', addressController.getUserAddresses);

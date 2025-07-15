@@ -5,7 +5,7 @@ const { sendSuccess, sendError, sendValidationError, sendNotFoundError } = requi
 // Get all addresses for a user
 const getUserAddresses = asyncHandler(async (req, res) => {
     try {
-        const userId = req.params.userId || req.user.id;
+        const userId = req.params.userId;
         
         const addresses = await Address.getUserAddresses(userId);
         
@@ -19,7 +19,7 @@ const getUserAddresses = asyncHandler(async (req, res) => {
 // Get default address for a user
 const getDefaultAddress = asyncHandler(async (req, res) => {
     try {
-        const userId = req.params.userId || req.user.id;
+        const userId = req.params.userId;
         
         const defaultAddress = await Address.getDefaultAddress(userId);
         
