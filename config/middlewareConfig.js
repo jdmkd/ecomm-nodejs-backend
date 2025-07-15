@@ -16,7 +16,7 @@ const middlewareConfig = (app) => {
   const corsOptions = {
     origin:
       process.env.NODE_ENV === "production"
-        ? "https://your-production-domain.com"
+        ? `${process.env.PRODUCTION_DOMAIN}`
         : "*",
   };
   app.use(cors(corsOptions));
