@@ -23,9 +23,12 @@ const getUserAddresses = asyncHandler(async (req, res) => {
 const getDefaultAddress = asyncHandler(async (req, res) => {
     try {
         const userId = req.params.userId;
-        
+        console.log("getDefaultAddress1111")
+        console.log("req.params :",req.params)
+        console.log("req.params :",req.body);
+
         const defaultAddress = await Address.getDefaultAddress(userId);
-        
+        console.log("defaultAddress :::",defaultAddress)
         if (!defaultAddress) {
             return sendNotFoundError(res, "No default address found.");
         }
@@ -206,9 +209,10 @@ const setDefaultAddress = asyncHandler(async (req, res) => {
 const getAddressById = asyncHandler(async (req, res) => {
     try {
         const addressId = req.params.addressId;
-        const userId = req.params.userId;
+        const userId = req.user.id;
 
         const address = await Address.findOne({ _id: addressId, userID: userId, isActive: true });
+        console.log("address :",address);
         if (!address) {
             return sendNotFoundError(res, "Address not found.");
         }
@@ -223,8 +227,12 @@ const getAddressById = asyncHandler(async (req, res) => {
 const getAllAddressByUserID = asyncHandler(async (req, res) => {
     try {
         const userID = req.params.userId;
+        console.log("getDefaultAddress3333")
+        console.log("req.params :",req.params)
+        console.log("req.params :",req.body);
 
         const address = await Address.find({ userID: userID, isActive: true });
+        console.log("address :",address);
         if (!address) {
             return sendNotFoundError(res, "Address not found.");
         }

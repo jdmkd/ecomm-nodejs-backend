@@ -12,7 +12,7 @@ router.get('/', addressController.getUserAddresses);
 // Get default address for the authenticated user
 router.get('/default', addressController.getDefaultAddress);
 
-// router.use(authMiddleware)
+router.use(authMiddleware)
 // Get address by ID
 router.get('/getAddressById/:addressId', addressController.getAddressById);
 
