@@ -59,7 +59,7 @@ const handleRazorpayPayment = async (req, res) => {
     res.json({  key: razorpayKey });
   } catch (error) {
     console.error('Error fetching Razorpay key:', error);
-    res.status(500).json({ error: true, message: error.message, data: null });
+    res.status(500).json({ error: true, message: "can't proceed payment failed. please try again.", data: null });
   }
 };
 
