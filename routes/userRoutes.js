@@ -22,7 +22,7 @@ router.post(
 ); // For password reset with email otp
 router.post("/password/reset/verify-otp", userController.resetPasswordWithOtp); // For password reset with email otp
 
-// ✅ Authenticated Routes
+// Authenticated Routes
 // Change password using old password (for only logged-in users).
 router.put(
   "/password/change/:id",
