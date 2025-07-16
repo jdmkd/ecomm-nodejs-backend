@@ -47,11 +47,19 @@ const getOrderById = async (req, res) => {
 
 // Create a new order
 const createOrder = async (req, res) => {
-    const { 
-        userID, 
+    
+    console.log("Create Order Called!!");
+    // console.log("req.user :",req.user)
+    console.log("req.body ::",req.body)
+    console.log("req.user :",req.user)
+    const userID = req.user.id;
+    console.log("userID :",userID)
+    const {
         orderStatus = "pending", 
         items, 
         totalPrice, 
+        shippingAddressID,
+        billingAddressID,
         shippingAddress, 
         paymentMethod, 
         couponCode, 
@@ -60,17 +68,17 @@ const createOrder = async (req, res) => {
     } = req.body;
     
     if (
-        !userID ||
         !Array.isArray(items) || items.length === 0 || 
         // !items || 
         !totalPrice || 
+        !shippingAddressID ||
         !shippingAddress || 
         !paymentMethod || 
         !orderTotal
     ) {
         return res.status(400).json({ 
             success: false, 
-            message: "User ID, items, totalPrice, shippingAddress, paymentMethod, and orderTotal are required." 
+            message: "Order could not be processed. Please ensure all required information is provided." 
         });
     }
 
@@ -97,10 +105,13 @@ const createOrder = async (req, res) => {
         }
 
 
-        const order = new Order({ userID, 
+        const order = new Order({ 
+            userID, 
             orderStatus, 
             items, 
             totalPrice, 
+            shippingAddressID,
+            billingAddressID: billingAddressID || shippingAddressID,
             shippingAddress, 
             paymentMethod, 
             couponCode, 
@@ -108,13 +119,16 @@ const createOrder = async (req, res) => {
             trackingUrl 
         });
         const newOrder = await order.save();
-        console.log("Order Created successfully!!!!!!")
+        console.log("Order Created successfully!")
+
         res.json({ 
             success: true, 
-            message: "Order created and product quantity updated successfully.", 
+            message: "Order created successfully.", 
             data: null 
         });
     } catch (error) {
+        console.log("error.message ::",error.message);
+
         res.status(500).json({ success: false, message: error.message });
     }
 };
