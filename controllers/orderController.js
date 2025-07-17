@@ -48,12 +48,8 @@ const getOrderById = async (req, res) => {
 // Create a new order
 const createOrder = async (req, res) => {
     
-    console.log("Create Order Called!!");
-    // console.log("req.user :",req.user)
-    console.log("req.body ::",req.body)
-    console.log("req.user :",req.user)
     const userID = req.user.id;
-    console.log("userID :",userID)
+    
     const {
         orderStatus = "pending", 
         items, 
@@ -98,8 +94,7 @@ const createOrder = async (req, res) => {
 
             product.quantity -= quantity;
             await product.save();
-            // console.log("product.quantity ==>",product.quantity)
-            // console.log("product.save() !!!!!!!!!!!!!")
+
             item.productName = product.name;
             item.price = product.offerPrice || product.price;
         }
@@ -119,7 +114,6 @@ const createOrder = async (req, res) => {
             trackingUrl 
         });
         const newOrder = await order.save();
-        console.log("Order Created successfully!")
 
         res.json({ 
             success: true, 

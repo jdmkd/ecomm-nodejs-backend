@@ -315,7 +315,7 @@ const updateUser = asyncHandler(async (req, res) => {
         
         if (dateOfBirth) {
             const dob = new Date(dateOfBirth);
-            console.log("dob ==> ",dob);
+            
             if (!isNaN(dob.getTime()) && dob <= new Date()) {
                 updateData.dateOfBirth = dob;
             } else {
@@ -430,7 +430,7 @@ const resetPasswordSendOtp = asyncHandler(async (req, res) => {
 
         // Send OTP
         await sendMail(mailOptions);
-        console.log("OTP sent to your email for password reset. Please check your inbox.");
+        // console.log("OTP sent to your email for password reset. Please check your inbox.");
 
         return sendSuccess(res, "OTP sent to your email for password reset. Please check your inbox.");
     } catch (error) {
@@ -496,10 +496,7 @@ const resetPasswordWithOtp = asyncHandler(async (req, res) => {
 // Change password using old password (for logged-in users)
 const changePasswordUsingOldPassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
-    const userId = req.params.id; // assuming you extract user from JWT via middleware
-    console.log("userId ==>", userId);
-    console.log("oldPassword ==>", oldPassword);
-    console.log("newPassword ==>", newPassword);
+    const userId = req.params.id;
 
     if (!oldPassword || !newPassword) {
       return sendValidationError(res, "Old and new passwords are required.");
