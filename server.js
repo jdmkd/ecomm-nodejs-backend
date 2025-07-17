@@ -10,10 +10,10 @@ const PORT = process.env.PORT || 5000;
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(`✅ Server running at http://127.0.0.1:${PORT}`);
+      console.log(`Server running at http://127.0.0.1:${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Database connection failed:", error);
+    console.error("Database connection failed:", error);
     process.exit(1);
   }
 })();

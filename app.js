@@ -10,9 +10,9 @@ console.log(`Starting server...`);
 
 // Log environment info
 if (process.env.NODE_ENV === "production") {
-  console.log("🚀 Running in PRODUCTION mode");
+  console.log("Running in PRODUCTION mode");
 } else {
-  console.log("👨‍💻 Running in DEVELOPMENT mode");
+  console.log("Running in DEVELOPMENT mode");
 }
 
 // Middleware

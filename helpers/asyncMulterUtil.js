@@ -4,7 +4,7 @@ module.exports = function asyncMulter(multerFieldsMiddleware) {
         if (err) {
           return next(err); // forwards to global error handler
         }
-        next(); // all good
+        next();
       });
     };
 };
