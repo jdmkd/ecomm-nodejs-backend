@@ -19,6 +19,10 @@ router.get('/getAddressById/:addressId', addressController.getAddressById);
 // Get address by userID
 router.get('/getAllAddressByUserID/:userId', addressController.getAllAddressByUserID);
 
+router.use(authMiddleware)
+// Get address by ID
+router.get('/getAddressById/:addressId', addressController.getAddressById);
+
 // Add new address
 router.post('/', addressController.addAddress);
 
@@ -30,10 +34,5 @@ router.delete('/:addressId', addressController.deleteAddress);
 
 // Set address as default
 router.put('/setDefaultAddress/:addressId', addressController.setDefaultAddress);
-
-router.use(authMiddleware)
-// Get address by ID
-router.get('/getAddressById/:addressId', addressController.getAddressById);
-
 
 module.exports = router; 
