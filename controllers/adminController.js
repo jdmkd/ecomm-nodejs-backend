@@ -80,7 +80,7 @@ exports.loginAdminUser = async (req, res) => {
 // @desc Get all users
 exports.getAllUsers = async (req, res) => {
   const users = await User.find().select("-password");
-  res.json({ success: true, data: users });
+  res.json({ success: true, data: users, data:null });
 };
 
 // Get all users
@@ -97,8 +97,8 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const user = await User.findById(req.params.id).select("-password");
   if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
-  res.json({ success: true, data: user });
+    return res.status(404).json({ success: false, message: "User not found", data:null });
+  res.json({ success: true, data: user, data:null });
 };
 
 // @desc Update user by ID
@@ -107,16 +107,16 @@ exports.updateUser = async (req, res) => {
     new: true,
   }).select("-password");
   if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
-  res.json({ success: true, data: user });
+    return res.status(404).json({ success: false, message: "User not found", data:null });
+  res.json({ success: true, data: user, data:null });
 };
 
 // @desc Delete user by ID
 exports.deleteUser = async (req, res) => {
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
-  res.json({ success: true, message: "User deleted successfully" });
+    return res.status(404).json({ success: false, message: "User not found", data:null });
+  res.json({ success: true, message: "User deleted successfully", data:null });
 };
 
 // Get all user OTP

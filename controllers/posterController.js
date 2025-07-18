@@ -9,7 +9,7 @@ const getAllPosters = async (req, res) => {
         const posters = await Poster.find({});
         res.json({ success: true, message: "Posters retrieved successfully.", data: posters });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -19,11 +19,11 @@ const getPosterById = async (req, res) => {
         const posterID = req.params.id;
         const poster = await Poster.findById(posterID);
         if (!poster) {
-            return res.status(404).json({ success: false, message: "Poster not found." });
+            return res.status(404).json({ success: false, message: "Poster not found.", data:null });
         }
         res.json({ success: true, message: "Poster retrieved successfully.", data: poster });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -37,7 +37,7 @@ const createPoster = async (req, res) => {
         const { posterName, productId } = req.body;
     
         if (!posterName) {
-            return res.status(400).json({ success: false, message: "Poster name is required." });
+            return res.status(400).json({ success: false, message: "Poster name is required.", data:null });
         }
 
         // Validate file upload
@@ -53,18 +53,18 @@ const createPoster = async (req, res) => {
             });
 
             await newPoster.save();
-            res.json({ success: true, message: "Poster created successfully." });
+            res.json({ success: true, message: "Poster created successfully.", data:null });
         } else {
-            return res.status(400).json({ success: false, message: "No file uploaded." });
+            return res.status(400).json({ success: false, message: "No file uploaded.", data:null });
         }
     } catch (err) {
         // Handle multer file size limit error
         if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ success: false, message: "File size is too large. Maximum filesize is 5MB." });
+            return res.status(400).json({ success: false, message: "File size is too large. Maximum filesize is 5MB.", data:null });
         }
         // General error handling
         console.error("Poster upload failed:", err);
-        return res.status(500).json({ success: false, message: err.message });        
+        return res.status(500).json({ success: false, message: err.message, data:null });        
     }
 };
 
@@ -90,7 +90,7 @@ const updatePoster = async (req, res) => {
 
         // Validate required fields
         if (!posterName || !imageUrl) {
-            return res.status(400).json({ success: false, message: "Poster name and image are required." });
+            return res.status(400).json({ success: false, message: "Poster name and image are required.", data:null });
         }
 
         try {
@@ -103,21 +103,21 @@ const updatePoster = async (req, res) => {
 
             // Handle case where the poster is not found
             if (!updatedPoster) {
-                return res.status(404).json({ success: false, message: "Poster not found." });
+                return res.status(404).json({ success: false, message: "Poster not found.", data:null });
             }
 
             // Return success response
             res.json({ success: true, message: "Poster updated successfully.", data: updatedPoster });
         } catch (err) {
-            res.status(500).json({ success: false, message: err.message });
+            res.status(500).json({ success: false, message: err.message, data:null });
         }
     }
     catch (err) {
         if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ success: false, message: "File size is too large. Maximum filesize is 5MB." });
+            return res.status(400).json({ success: false, message: "File size is too large. Maximum filesize is 5MB.", data:null });
         }
 
-        return res.status(500).json({ success: false, message: err.message });
+        return res.status(500).json({ success: false, message: err.message, data:null });
     }
 };
 
@@ -127,11 +127,11 @@ const deletePoster = async (req, res) => {
     try {
         const deletedPoster = await Poster.findByIdAndDelete(posterID);
         if (!deletedPoster) {
-            return res.status(404).json({ success: false, message: "Poster not found." });
+            return res.status(404).json({ success: false, message: "Poster not found.", data:null });
         }
-        res.json({ success: true, message: "Poster deleted successfully." });
+        res.json({ success: true, message: "Poster deleted successfully.", data:null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -143,10 +143,10 @@ const handleMulterError = (err, res) => {
             err.message = 'File size is too large. Maximum filesize is 5MB.';
         }
         console.log(`Upload error: ${err.message}`);
-        return res.status(400).json({ success: false, message: err.message });
+        return res.status(400).json({ success: false, message: err.message, data:null });
     } else if (err) {
         console.log(`Upload error: ${err.message}`);
-        return res.status(500).json({ success: false, message: err.message });
+        return res.status(500).json({ success: false, message: err.message, data:null });
     }
 };
 

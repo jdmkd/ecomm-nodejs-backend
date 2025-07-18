@@ -10,7 +10,7 @@ const sendNotification = async (req, res) => {
     const { title, description, imageUrl } = req.body;
     // Validation
     if (!title || !description) {
-        return res.status(400).json({ success: false, message: "Title and description are required." });
+        return res.status(400).json({ success: false, message: "Title and description are required.", data:null });
     }
     console.log("process.env.ONE_SIGNAL_APP_ID ===>",process.env.ONE_SIGNAL_APP_ID);
     console.log("req.body  ==> ",req.body);
@@ -40,7 +40,7 @@ const sendNotification = async (req, res) => {
         res.json({ success: true, message: 'Notification sent successfully', data: null });
     } catch (error) {
         console.error('Error sending notification:', error?.response?.data || error.message);
-        res.status(500).json({ success: false, message: "Something went wrong while sending the notification."});
+        res.status(500).json({ success: false, message: "Something went wrong while sending the notification.", data:null });
     }
 };
 
@@ -70,7 +70,7 @@ const trackNotification = async (req, res) => {
         res.json({ success: true, message: 'Notification status fetched successfully.', data: result });
     } catch (error) {
         console.error('Error tracking notification:', error?.response?.data || error.message);
-        res.status(500).json({ success: false, message: "Unable to track notification at this moment."});
+        res.status(500).json({ success: false, message: "Unable to track notification at this moment.", data:null });
     }
 };
 
@@ -82,7 +82,7 @@ const getAllNotifications = async (req, res) => {
         res.json({ success: true, message: "Notifications retrieved successfully.", data: notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
-        res.status(500).json({ success: false, message: "Failed to fetch notifications." });
+        res.status(500).json({ success: false, message: "Failed to fetch notifications.", data:null });
     }
 };
 
@@ -95,12 +95,12 @@ const deleteNotification = async (req, res) => {
         const notification = await Notification.findByIdAndDelete(notificationID);
 
         if (!notification) {
-            return res.status(404).json({ success: false, message: "Notification not found." });
+            return res.status(404).json({ success: false, message: "Notification not found.", data:null });
         }
         res.json({ success: true, message: "Notification deleted successfully.", data:null });
     } catch (error) {
         console.error('Error deleting notification:', error.message);
-        res.status(500).json({ success: false, message: "Failed to delete notification." });
+        res.status(500).json({ success: false, message: "Failed to delete notification.", data:null });
     }
 };
 

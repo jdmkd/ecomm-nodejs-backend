@@ -5,10 +5,10 @@ const Product = require('../model/productModel');
 const isCouponValid = (coupon) => {
     const currentDate = new Date();
     if (coupon.endDate < currentDate) {
-        return { valid: false, message: "Coupon is expired." };
+        return { valid: false, message: "Coupon is expired.", data:null };
     }
     if (coupon.status !== 'active') {
-        return { valid: false, message: "Coupon is inactive." };
+        return { valid: false, message: "Coupon is inactive.", data:null };
     }
     return { valid: true };
 };
@@ -21,7 +21,7 @@ const getAllCoupons = async (req, res) => {
             .populate('applicableProduct', 'id name');
         res.json({ success: true, message: "Coupons retrieved successfully.", data: coupons });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -34,11 +34,11 @@ const getCouponById = async (req, res) => {
             .populate('applicableSubCategory', 'id name')
             .populate('applicableProduct', 'id name');
         if (!coupon) {
-            return res.status(404).json({ success: false, message: "Coupon not found." });
+            return res.status(404).json({ success: false, message: "Coupon not found.", data:null });
         }
         res.json({ success: true, message: "Coupon retrieved successfully.", data: coupon });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -46,7 +46,7 @@ const getCouponById = async (req, res) => {
 const createCoupon = async (req, res) => {
     const { couponCode, discountType, discountAmount, minimumPurchaseAmount, endDate, status, applicableCategory, applicableSubCategory, applicableProduct } = req.body;
     if (!couponCode || !discountType || !discountAmount || !endDate || !status) {
-        return res.status(400).json({ success: false, message: "Code, discountType, discountAmount, endDate, and status are required." });
+        return res.status(400).json({ success: false, message: "Code, discountType, discountAmount, endDate, and status are required.", data:null });
     }
 
 
@@ -68,7 +68,7 @@ const createCoupon = async (req, res) => {
 
         res.json({ success: true, message: "Coupon created successfully.", data: null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -80,7 +80,7 @@ const updateCoupon = async (req, res) => {
         const { couponCode, discountType, discountAmount, minimumPurchaseAmount, endDate, status, applicableCategory, applicableSubCategory, applicableProduct } = req.body;
         console.log(req.body)
         if (!couponCode || !discountType || !discountAmount || !endDate || !status) {
-            return res.status(400).json({ success: false, message: "CouponCode, discountType, discountAmount, endDate, and status are required." });
+            return res.status(400).json({ success: false, message: "CouponCode, discountType, discountAmount, endDate, and status are required.", data:null });
         }
 
         const updatedCoupon = await Coupon.findByIdAndUpdate(
@@ -90,12 +90,12 @@ const updateCoupon = async (req, res) => {
         );
 
         if (!updatedCoupon) {
-            return res.status(404).json({ success: false, message: "Coupon not found." });
+            return res.status(404).json({ success: false, message: "Coupon not found.", data:null });
         }
 
         res.json({ success: true, message: "Coupon updated successfully.", data: null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -106,11 +106,11 @@ const deleteCoupon = async (req, res) => {
         const couponID = req.params.id;
         const deletedCoupon = await Coupon.findByIdAndDelete(couponID);
         if (!deletedCoupon) {
-            return res.status(404).json({ success: false, message: "Coupon not found." });
+            return res.status(404).json({ success: false, message: "Coupon not found.", data:null });
         }
-        res.json({ success: true, message: "Coupon deleted successfully." });
+        res.json({ success: true, message: "Coupon deleted successfully.", data:null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -125,18 +125,18 @@ const checkCouponValidity = async (req, res) => {
 
         // If coupon is not found, return false
         if (!coupon) {
-            return res.json({ success: false, message: "Coupon not found." });
+            return res.json({ success: false, message: "Coupon not found.", data:null });
         }
 
         // Check if the coupon is expired
         const validity = isCouponValid(coupon);
         if (!validity.valid) {
-            return res.json({ success: false, message: validity.message });
+            return res.json({ success: false, message: validity.message, data:null });
         }
 
         // Check if the purchase amount is greater than the minimum purchase amount specified in the coupon
         if (coupon.minimumPurchaseAmount && purchaseAmount < coupon.minimumPurchaseAmount) {
-            return res.json({ success: false, message: "Minimum purchase amount not met." });
+            return res.json({ success: false, message: "Minimum purchase amount not met.", data:null });
         }
 
         // Check if the coupon is applicable for all orders
@@ -164,11 +164,11 @@ const checkCouponValidity = async (req, res) => {
         if (isValid) {
             return res.json({ success: true, message: "Coupon is applicable for the provided products." ,data:coupon});
         } else {
-            return res.json({ success: false, message: "Coupon is not applicable for the provided products." });
+            return res.json({ success: false, message: "Coupon is not applicable for the provided products.", data:null });
         }
     } catch (error) {
         console.error('Error checking coupon code:', error);
-        return res.status(500).json({ success: false, message: "Internal server error." });
+        return res.status(500).json({ success: false, message: "Internal server error.", data:null });
     }
 };
 

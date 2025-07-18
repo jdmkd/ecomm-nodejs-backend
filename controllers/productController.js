@@ -15,7 +15,7 @@ const getAllProducts = async (req, res) => {
         .populate('proVariantId', 'id name');
         res.json({ success: true, message: "Products retrieved successfully.", data: products });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -30,11 +30,11 @@ const getProductById = async (req, res) => {
             .populate('proVariantTypeId', 'id name')
             .populate('proVariantId', 'id name');
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found." });
+            return res.status(404).json({ success: false, message: "Product not found.", data:null });
         }
         res.json({ success: true, message: "Product retrieved successfully.", data: product });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -156,10 +156,10 @@ const updateProduct = async (req, res) => {
                 err.message = 'File size is too large. Maximum filesize is 5MB per image.';
             }
             console.log(`Update product (multer): ${err.message}`);
-            return res.status(400).json({ success: false, message: err.message });
+            return res.status(400).json({ success: false, message: err.message, data:null });
         } else if (err) {
             console.log(`Update product (upload): ${err.message}`);
-            return res.status(400).json({ success: false, message: err.message });
+            return res.status(400).json({ success: false, message: err.message, data:null });
         }
 
         try {
@@ -197,7 +197,7 @@ const updateProduct = async (req, res) => {
             
             const productToUpdate = await Product.findById(productId);
             if (!productToUpdate) {
-                return res.status(404).json({ success: false, message: "Product not found." });
+                return res.status(404).json({ success: false, message: "Product not found.", data:null });
             }
 
             // Update textual fields if provided
@@ -264,7 +264,7 @@ const updateProduct = async (req, res) => {
 
         } catch (error) {
             console.error("Error updating product:", error);
-            return res.status(500).json({ success: false, message: error.message });
+            return res.status(500).json({ success: false, message: error.message, data:null });
         }
     });
 };
@@ -275,11 +275,11 @@ const deleteProduct = async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(productID);
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found." });
+            return res.status(404).json({ success: false, message: "Product not found.", data:null });
         }
-        res.json({ success: true, message: "Product deleted successfully." });
+        res.json({ success: true, message: "Product deleted successfully.", data:null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 

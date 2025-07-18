@@ -9,7 +9,7 @@ const getAllOrders = async (req, res) => {
         .populate('userID', 'id name').sort({ _id: -1 });
         res.json({ success: true, message: "Orders retrieved successfully.", data: orders });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -24,7 +24,7 @@ const getOrdersByUserId = async (req, res) => {
             .sort({ _id: -1 });
         res.json({ success: true, message: "Orders retrieved successfully.", data: orders });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -37,11 +37,11 @@ const getOrderById = async (req, res) => {
             .populate('couponCode', 'id couponCode discountType discountAmount')
             .populate('userID', 'id name');
         if (!order) {
-            return res.status(404).json({ success: false, message: "Order not found." });
+            return res.status(404).json({ success: false, message: "Order not found.", data:null });
         }
         res.json({ success: true, message: "Order retrieved successfully.", data: order });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -74,7 +74,8 @@ const createOrder = async (req, res) => {
     ) {
         return res.status(400).json({ 
             success: false, 
-            message: "Order could not be processed. Please ensure all required information is provided." 
+            message: "Order could not be processed. Please ensure all required information is provided.",
+            data:null
         });
     }
 
@@ -85,11 +86,11 @@ const createOrder = async (req, res) => {
 
             const product = await Product.findById(productID);
             if (!product) {
-                return res.status(404).json({ success: false, message: `Product with ID ${productID} not found.` });
+                return res.status(404).json({ success: false, message: `Product with ID ${productID} not found.`, data:null });
             }
 
             if (product.quantity < quantity) {
-                return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${quantity}` });
+                return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${quantity}`, data:null });
             }
 
             product.quantity -= quantity;
@@ -123,7 +124,7 @@ const createOrder = async (req, res) => {
     } catch (error) {
         console.log("error.message ::",error.message);
 
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -134,7 +135,7 @@ const updateOrder = async (req, res) => {
         const { orderStatus, trackingUrl } = req.body;
 
         if (!orderStatus) {
-            return res.status(400).json({ success: false, message: "Order Status required." });
+            return res.status(400).json({ success: false, message: "Order Status required.", data:null });
         }
 
         const updatedOrder = await Order.findByIdAndUpdate(
@@ -144,12 +145,12 @@ const updateOrder = async (req, res) => {
         );
 
         if (!updatedOrder) {
-            return res.status(404).json({ success: false, message: "Order not found." });
+            return res.status(404).json({ success: false, message: "Order not found.", data:null });
         }
 
         res.json({ success: true, message: "Order updated successfully.", data: null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 
@@ -160,11 +161,11 @@ const deleteOrder = async (req, res) => {
     try {
         const deletedOrder = await Order.findByIdAndDelete(orderID);
         if (!deletedOrder) {
-            return res.status(404).json({ success: false, message: "Order not found." });
+            return res.status(404).json({ success: false, message: "Order not found.", data:null });
         }
-        res.json({ success: true, message: "Order deleted successfully." });
+        res.json({ success: true, message: "Order deleted successfully.", data:null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 };
 

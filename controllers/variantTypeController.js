@@ -9,7 +9,7 @@ const getAllVariantTypes = asyncHandler(async (req, res) => {
         const variantTypes = await VariantType.find();
         res.json({ success: true, message: "VariantTypes retrieved successfully.", data: variantTypes });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 });
 
@@ -18,11 +18,11 @@ const getVariantTypeById = asyncHandler(async (req, res) => {
     try {
         const variantType = await VariantType.findById(req.params.id);
         if (!variantType) {
-            return res.status(404).json({ success: false, message: "VariantType not found." });
+            return res.status(404).json({ success: false, message: "VariantType not found.", data:null });
         }
         res.json({ success: true, message: "VariantType retrieved successfully.", data: variantType });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 });
 
@@ -30,7 +30,7 @@ const getVariantTypeById = asyncHandler(async (req, res) => {
 const createVariantType = asyncHandler(async (req, res) => {
     const { name ,type } = req.body;
     if (!name) {
-        return res.status(400).json({ success: false, message: "Name is required." });
+        return res.status(400).json({ success: false, message: "Name is required.", data:null });
     }
 
     try {
@@ -38,7 +38,7 @@ const createVariantType = asyncHandler(async (req, res) => {
         const newVariantType = await variantType.save();
         res.json({ success: true, message: "VariantType created successfully.", data: null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 });
 
@@ -46,17 +46,17 @@ const createVariantType = asyncHandler(async (req, res) => {
 const updateVariantType = asyncHandler(async (req, res) => {
     const { name ,type } = req.body;
     if (!name) {
-        return res.status(400).json({ success: false, message: "Name is required." });
+        return res.status(400).json({ success: false, message: "Name is required.", data:null });
     }
 
     try {
         const updatedVariantType = await VariantType.findByIdAndUpdate(req.params.id, { name , type}, { new: true });
         if (!updatedVariantType) {
-            return res.status(404).json({ success: false, message: "VariantType not found." });
+            return res.status(404).json({ success: false, message: "VariantType not found.", data:null });
         }
         res.json({ success: true, message: "VariantType updated successfully.", data: null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 });
 
@@ -67,23 +67,23 @@ const deleteVariantType = asyncHandler(async (req, res) => {
         // Check if any variant is associated with this variant type
         const variantCount = await Variant.countDocuments({ variantTypeId: variantTypeID });
         if (variantCount > 0) {
-            return res.status(400).json({ success: false, message: "Cannot delete variant type. It is associated with one or more variants." });
+            return res.status(400).json({ success: false, message: "Cannot delete variant type. It is associated with one or more variants.", data:null });
         }
         
         // Check if any products reference this variant type
         const products = await Product.find({ proVariantTypeId: variantTypeID });
         if (products.length > 0) {
-            return res.status(400).json({ success: false, message: "Cannot delete variant type. Products are referencing it." });
+            return res.status(400).json({ success: false, message: "Cannot delete variant type. Products are referencing it.", data:null });
         }
 
         // If no variants or products are associated, proceed with deletion of the variant type
         const variantType = await VariantType.findByIdAndDelete(variantTypeID);
         if (!variantType) {
-            return res.status(404).json({ success: false, message: "Variant type not found." });
+            return res.status(404).json({ success: false, message: "Variant type not found.", data:null });
         }
-        res.json({ success: true, message: "Variant type deleted successfully." });
+        res.json({ success: true, message: "Variant type deleted successfully.", data:null });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message, data:null });
     }
 });
 
